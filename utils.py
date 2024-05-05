@@ -32,25 +32,6 @@ def save_config_file(config_file, args):
         yaml.safe_dump(args, outfile, default_flow_style=False)
 
 
-def read_data(file, mode=0):
-    if mode == 1:
-        df = pd.read_csv(file, index_col=None, header=None)
-        t = np.array(df[0], dtype=np.double) / 1000000000.
-        t -= t[0]
-        x = np.array(df[1])
-        y = np.array(df[2])
-        z = np.array(df[3])
-        return t, x, y, z
-    elif mode == 0:
-        df = pd.read_csv(file, index_col=None, header=0)
-        sec = 'seconds_elapsed'
-        x = np.array(df['x'])
-        y = np.array(df['y'])
-        z = np.array(df['z'])
-        t = np.array(df[sec]) - df[sec][0]
-        return t, x, y, z
-
-
 def normalization(*args):
     def standard(x):
         m = x.mean()
@@ -149,32 +130,3 @@ def stime_ft(*args, hz=1000, s_hz=0, e_hz=300):
                 e = i
         return f[s:e + 1], t, z[s:e + 1][:]
     return [stft(x) for x in args]
-
-
-def generate_image(*args):
-    def calc(xx):
-        xx = np.abs(xx[2])
-        xx = np.power(xx, 0.5)
-        min_x = np.min(xx)
-        max_x = np.max(xx)
-        xx = np.ceil((xx - min_x) * (255. / (max_x - min_x)))
-        return xx
-    x, y, z = [calc(x) for x in args]
-    img = np.zeros((3, x.shape[0], x.shape[1]))
-    img[0, :, :] = x[:, :]
-    img[1, :, :] = y[:, :]
-    img[2, :, :] = z[:, :]
-    img = img.transpose((1, 2, 0))
-    img = Image.fromarray(img.astype(np.uint8))
-    img.save('./tmptmp.png')
-    return img
-    return Image.fromarray(img.astype(np.uint8))
-
-
-def solve_image_PIL(file, hz):
-    t, x, y, z = read_data(file, mode=1)
-    t, x, y, z = interpolation(t, x, y, z, hz=hz)
-    t, x, y, z = clipping(t, x, y, z, s=-1.3, e=-0.3, hz=hz)
-    x, y, z = normalization(x, y, z)
-    ax, ay, az = stime_ft(x, y, z, hz=hz, s_hz=0, e_hz=200)
-    return generate_image(ax, ay, az)
