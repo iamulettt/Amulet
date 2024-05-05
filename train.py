@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time : 2024/4/8 20:26
-# @Author : liuhu
-# @File : train.py
 
 import os.path
 import argparse
