@@ -29,25 +29,12 @@ def init():
 @torch.no_grad()
 @app.route('/verify', methods=['POST'])
 def solve_verify():
-    image = transform(utils.solve_image_PIL(StringIO(request.data.decode('utf-8')), hz=1000))
-    ret = net.run(images=image.reshape(1, *image.shape), env=args.__dict__).reshape(-1, args.features)
-    acc = torch.matmul(register, ret.T)
-    cnt = (acc >= 0.4545).sum()
-
-    if cnt < 2:
-        abort(400)
-    print(f"Detected the {(acc.argmax() // 3).item()}th finger touch...")
-    return "200"
-
+    pass
 
 @torch.no_grad()
 @app.route('/register', methods=['POST'])
 def solve_register():
-    image = transform(utils.solve_image_PIL(StringIO(request.data.decode('utf-8')), hz=1000))
-    ret = net.run(images=image.reshape(1, *image.shape), env=args.__dict__).reshape(-1, args.features)
-    global register
-    register = ret if register.shape[0] == 0 else torch.cat([register, ret], dim=0)
-    return "200"
+    pass
 
 
 if __name__ == '__main__':
@@ -68,4 +55,4 @@ if __name__ == '__main__':
     os.makedirs(os.path.dirname(args.output), exist_ok=True)
     print(args)
     net = init()
-    app.run(port=6006, host='0.0.0.0')
+    app.run(port=xxxx, host='0.0.0.0')
