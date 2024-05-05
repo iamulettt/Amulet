@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time : 2024/4/8 19:44
-# @Author : liuhu
-# @File : utils.py
 
 import yaml
 import numpy as np
